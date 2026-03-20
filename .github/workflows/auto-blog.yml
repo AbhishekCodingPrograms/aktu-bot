@@ -1,0 +1,48 @@
+name: AKTU Auto Blog
+
+on:
+  schedule:
+    # Runs at minute 0 past every hour (e.g. 10:00, 11:00, 12:00 etc.)
+    - cron: "0 * * * *"
+  
+  # Allows you to trigger the run manually from the GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  run-auto-blog:
+    runs-on: ubuntu-latest
+    
+    # Ensures we don't have multiple runs happening at the exact same time
+    concurrency:
+      group: auto-blog
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip"
+
+      - name: Install Missing Dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Main Auto Blog Script
+        run: python main.py
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          WP_USERNAME: ${{ secrets.WP_USERNAME }}
+          WP_PASSWORD: ${{ secrets.WP_PASSWORD }}
+
+      - name: Save Updated Database
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add database.json
+          # Only commit if database.json changed
+          git diff --quiet && git diff --staged --quiet || git commit -m "chore: auto-update database.json"
+          git push
