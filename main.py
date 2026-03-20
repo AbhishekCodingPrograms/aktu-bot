@@ -12,15 +12,17 @@ Flow:
 import json
 import sys
 from pathlib import Path
+from datetime import datetime
 
 # Fix for printing emojis in Windows cmd/PowerShell
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+if hasattr(sys.stdout, 'reconfigure') and sys.stdout.encoding != 'utf-8':
+    sys.stdout.reconfigure(encoding='utf-8')  # type: ignore
 
 from scraper   import fetch_notices
-from generator import generate_blog
+from generator import generate_blog, generate_ctr_title
 from publisher import publish_post
-from image_generator import generate_and_upload_image
+from image_generator import generate_and_upload_image, upload_image_bytes
+from pdf_handler import process_pdf
 
 DATABASE_FILE = Path(__file__).parent / "database.json"
 
@@ -66,21 +68,58 @@ def main():
         if title in posted:
             print(f"[SKIP] Already posted: {title[:60]}...")
             continue
+            
+        date_text = notice.get("date_text", "")
+        if date_text:
+            try:
+                # AKTU format is usually '19-Mar-2026'
+                notice_date = datetime.strptime(date_text, "%d-%b-%Y")
+                if (datetime.now() - notice_date).days > 1:
+                    print(f"[SKIP] Old notice ({date_text}): {title[:60]}...")
+                    posted.append(title)
+                    save_database(posted)
+                    continue
+            except ValueError:
+                pass # Unparseable date format, proceed normally
 
-        print(f"\n📄 Processing: {title[:70]}...")
+        print(f"\n📄 Processing ({date_text}): {title[:70]}...")
 
-        # Generate blog content
-        blog_content = generate_blog(title, link)
+        # 1. Process PDF (Extract text & page image)
+        pdf_text, webp_bytes = process_pdf(link)
+
+        # 2. Generate CTR title
+        ctr_title = generate_ctr_title(title)
+
+        # 3. Upload Extracted PDF Image (WEBP) to embed in the post body
+        embedded_image_url = ""
+        pdf_media_id = 0
+        if webp_bytes:
+            upload_result = upload_image_bytes(ctr_title, webp_bytes)
+            if isinstance(upload_result, tuple) and len(upload_result) == 2:
+                pdf_media_id, embedded_image_url = upload_result
+
+        # 4. Generate & Upload Featured Image via Google Gemini AI
+        media_id = 0
+        gemini_img_result = generate_and_upload_image(ctr_title)
+        if isinstance(gemini_img_result, tuple) and len(gemini_img_result) == 2:
+            media_id, _ = gemini_img_result
+        elif isinstance(gemini_img_result, int):
+            media_id = gemini_img_result
+            
+        # 4b. Fallback to PDF preview as Featured Image if Gemini failed
+        if not media_id and pdf_media_id:
+            print("   [INFO] Using PDF preview as Featured Image since Gemini generation was unavailable.")
+            media_id = pdf_media_id
+
+        # 5. Generate blog content using PDF text and embedded image url
+        blog_content = generate_blog(ctr_title, link, pdf_text, embedded_image_url)
 
         if not blog_content:
             print(f"[ERROR] Blog generation failed for: {title}. Skipping.")
             continue
-            
-        # Optional: Generate Featured Image
-        media_id = generate_and_upload_image(title)
 
         # Publish to WordPress
-        result = publish_post(title, blog_content, media_id=media_id)
+        result = publish_post(ctr_title, blog_content, media_id=media_id)
 
         if result:
             posted.append(title)

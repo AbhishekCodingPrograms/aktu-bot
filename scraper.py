@@ -48,9 +48,12 @@ def fetch_notices() -> list[dict]:
                 
             # Extract text from columns, avoiding the 'Download' or 'देखे' text
             columns = row.find_all("td")
+            date_text = ""
             if len(columns) >= 3:
-                # Typically, col 0 is SNo, col 1 is Dept, col 2 is Title
+                # Typically, col 0 is SNo, col 1 is Dept, col 2 is Title, col 3 is Date
                 title = columns[2].text.strip()
+                if len(columns) >= 4:
+                    date_text = columns[3].text.strip()
             else:
                 title = row.get_text(separator=' ', strip=True)
 
@@ -64,7 +67,8 @@ def fetch_notices() -> list[dict]:
             )
             notices.append({
                 "title": title,
-                "link": full_url
+                "link": full_url,
+                "date_text": date_text
             })
 
     if not notices:
