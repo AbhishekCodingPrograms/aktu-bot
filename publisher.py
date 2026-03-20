@@ -2,6 +2,7 @@
 publisher.py — Publish blog posts to WordPress via REST API.
 """
 
+import re
 import requests
 from config import WP_URL, WP_USERNAME, WP_PASSWORD, WP_CATEGORY_IDS, WP_TAG_IDS
 
@@ -19,9 +20,14 @@ def publish_post(title: str, content: str, media_id: int = 0) -> dict:
         The JSON response from WordPress (contains post ID, URL, etc.)
     """
 
+    # Generate a clean SEO-friendly URL slug strictly under 75 characters
+    slug = re.sub(r'[^a-zA-Z0-9\s-]', '', title).strip().lower()
+    slug = re.sub(r'[-\s]+', '-', slug)[:74].strip('-')
+
     post_data = {
         "title":      title,
         "content":    content,
+        "slug":       slug,
         "status":     "publish",          # Change to "draft" to review before publishing
         "categories": WP_CATEGORY_IDS,
         "tags":       WP_TAG_IDS,

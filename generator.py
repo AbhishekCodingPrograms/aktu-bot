@@ -22,7 +22,7 @@ def generate_ctr_title(original_title: str) -> str:
 You are an expert copywriter for an Indian engineering student blog.
 Rewrite the following AKTU official notice title into a highly engaging, high-CTR (Click-Through Rate) blog post title.
 Make it urgent, exciting, and clear for students (e.g., use words like "Big Update", "Urgent", "Must Check", "Good News", "Alert").
-Keep it under 70 characters. Do not use quotes around the title.
+Keep it strictly under 120 characters maximum. Do not use quotes around the title.
 
 Original Notice Title: {original_title}
 
