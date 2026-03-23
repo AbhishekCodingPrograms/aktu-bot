@@ -45,6 +45,9 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add database.json
-          # Only commit if database.json changed
-          git diff --quiet && git diff --staged --quiet || git commit -m "chore: auto-update database.json"
-          git push
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: auto-update database.json"
+            git push
+          else
+            echo "No changes to commit"
+          fi
