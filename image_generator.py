@@ -72,7 +72,7 @@ def generate_and_upload_image(title: str) -> Tuple[int, str]:
 
     try:
         response = gemini_client.models.generate_images(
-            model='imagen-3.0-generate-001',
+            model='imagen-4.0-generate-001',
             prompt=prompt,
             config={
                 "number_of_images": 1,
