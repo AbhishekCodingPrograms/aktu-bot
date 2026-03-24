@@ -120,11 +120,15 @@ Do NOT add a meta description tag — just return the full blog HTML body conten
                 max_output_tokens=3000,
             )
         )
-        content = response.text
+        content = response.text.strip()
         
         # Strip potential markdown formatting from the response
         if content.startswith("```html"):
             content = content[7:]
+        elif content.startswith("```"):
+            content = content[3:]
+            
+        content = content.strip()
         if content.endswith("```"):
             content = content[:-3]
             

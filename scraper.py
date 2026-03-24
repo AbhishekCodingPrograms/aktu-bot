@@ -25,8 +25,11 @@ def fetch_notices() -> list[dict]:
         )
     }
 
+    import time
+    uncached_url = f"{AKTU_URL}?_={int(time.time())}"
+    
     try:
-        response = requests.get(AKTU_URL, headers=headers, timeout=15, verify=False)
+        response = requests.get(uncached_url, headers=headers, timeout=15, verify=False)
         response.raise_for_status()
     except requests.RequestException as e:
         print(f"[ERROR] Failed to fetch AKTU page: {e}")
