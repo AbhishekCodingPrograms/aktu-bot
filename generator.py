@@ -73,8 +73,8 @@ def generate_blog(title: str, link: str, pdf_text: str = "", image_url: str = ""
     prompt = f"""
 You are an expert education blogger writing for Indian engineering students (AKTU University).
 
-Write a 1000+ word complete SEO-optimized blog post in {BLOG_LANGUAGE} (mix of Hindi and English) that is highly engaging and designed to keep users reading (high CTR/retention).
-Read the actual PDF text below carefully to make the blog post 100% accurate according to the inside PDF content.
+Write a HIGHLY DETAILED, 1000+ word complete SEO-optimized blog post in {BLOG_LANGUAGE} (mix of Hindi and English) that is highly engaging and designed to keep users reading (high CTR/retention).
+Read the actual PDF text below carefully to make the blog post 100% accurate according to the inside PDF content. If the PDF text is short, expand on the context naturally and comprehensively to meet the strict 1000+ word requirement.
 
 Title: {title}
 
@@ -86,26 +86,24 @@ Structure the post with proper HTML tags (use <h2>, <h3>, <p>, <ul>, <li>, <stro
 
 CRITICAL HEADING RULE: Do NOT use generic section names like "Introduction", "Key Highlights", "Important Dates", or "Who is Affected" as your actual H2/H3 headings. Instead, create UNIQUE, content-specific, and catchy headings for every single blog post (e.g., instead of "Important Dates", use "AKTU B.Tech Exam Form Last Date 2024").
 
-Ensure the blog covers ALL of the following topics (using your unique headings):
-1. **Introduction** — start with a high-CTR, click-worthy hook! Tell the students exactly why this notice is crucial today.
-2. **Key Highlights (Urgent)** — bullet points of the main updates.
-3. **Important Dates** — table or list (if dates are mentioned or likely)
-4. **Who is Affected** — which students, branches, semesters
-5. **How to Check / Download the Notice** — numbered step-by-step guide
+Ensure the blog covers ALL of the following topics (using your unique headings) in GREAT DETAIL:
+1. **Introduction** — start with a high-CTR, click-worthy hook! Tell the students exactly why this notice is crucial today in 2-3 paragraphs.
+2. **Key Highlights (Urgent)** — detailed bullet points of the main updates. Explain each point.
+3. **Important Dates** — table or detailed list (if dates are mentioned or likely).
+4. **Who is Affected** — deeply explain which students, branches, and semesters this applies to.
+5. **How to Check / Download the Notice** — detailed numbered step-by-step guide.
 6. **Official Link** — mention the direct link: <a href="{link}" target="_blank" rel="noopener">{link}</a>
 7. **Internal Links** — embed these naturally within the content:
 {internal_links_text}
-8. **Student Advice / Pro Tips** — 3-5 practical tips
-9. **FAQs** — 5 frequently asked questions with answers
+8. **Student Advice / Pro Tips** — 3-5 highly practical, actionable tips for students.
+9. **FAQs** — 5-7 frequently asked questions with highly detailed answers.
 
-SEO & CTR Requirements:
-- Write an incredibly engaging, scroll-stopping first paragraph to reduce bounce rate.
-- Create unique, content-specific H2 and H3 subheadings for every post.
-- Include the main keyword (from the title) in the first paragraph.
-- Use the keyword naturally 4–6 times throughout.
-- Add LSI/related keywords.
-- Write meta-friendly, human-like sentences with an exciting tone.
-- Write good content depth with short paragraphs format, making it Ezoic ad-friendly and ensuring complete SEO optimization.
+SEO, EZOIC & QUALITY REQUIREMENTS (STRICT):
+- LENGTH REQUIREMENT: You MUST generate at least 1000 words. Expand heavily on context, implications, rules, and student advice to reach this length.
+- HUMAN-WRITTEN TONE: Write in a highly conversational, natural, and relatable tone. Avoid robotic structures, AI clichés (like "delve into", "in conclusion"), and repetitive phrasing.
+- EZOIC AD OPTIMIZATION: Write almost EXCLUSIVELY in short paragraphs (1-3 sentences maximum). Break up text constantly with bullet points, numbered lists, bold text, and H2/H3 headings. This creates "white space" for automatic Ezoic ad placeholders.
+- Create unique, content-specific H2 and H3 subheadings for every post (aim for at least 7-10 subheadings).
+- Include the main keyword (from the title) in the first paragraph. Use the keyword naturally 4–6 times throughout, along with LSI/related keywords.
 - STRICT RULE: Do NOT use any emojis anywhere in the text.
 - STRICT RULE: Do NOT use any divider lines (e.g., <hr>, ---, or any horizontal rules).
 {image_instruction}
