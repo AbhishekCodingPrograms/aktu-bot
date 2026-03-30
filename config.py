@@ -26,7 +26,7 @@ WP_TAG_IDS = [2, 3]          # e.g., "AKTU", "Results" tag IDs
 AKTU_URL = "https://erp.aktu.ac.in/Webpages/Public/Circular/frmCircularForWebsite.aspx"
 
 # 🖊️ Blog Settings
-MAX_NOTICES = 6              # How many latest notices to process per run
+MAX_NOTICES = 15             # How many latest notices to process per run
 BLOG_LANGUAGE = "English"    # Language style for AI-generated content
 GENERATE_IMAGES = os.environ.get("GENERATE_IMAGES", "false").lower() == "true"  # Set to "true" to enable DALL-E images
 
