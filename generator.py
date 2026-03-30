@@ -1,23 +1,26 @@
 """
-generator.py — Generate SEO-optimized blog posts using Google Gemini.
+generator.py — Generate SEO-optimized blog posts using OpenRouter.
 """
 
 import warnings
 warnings.simplefilter('ignore')
 
-import google.generativeai as genai
-from config import GEMINI_API_KEY, BLOG_LANGUAGE, INTERNAL_LINKS
+from openai import OpenAI
+from config import GROQ_API_KEY, BLOG_LANGUAGE, INTERNAL_LINKS
 
-# Configure Gemini with the API Key
-genai.configure(api_key=GEMINI_API_KEY)
+# Configure Groq Client (OpenAI compatible)
+client = OpenAI(
+    base_url="https://api.groq.com/openai/v1",
+    api_key=GROQ_API_KEY,
+)
 
+# Use the top free model on Groq
+MODEL_NAME = "llama-3.3-70b-versatile"
 
 def generate_ctr_title(original_title: str) -> str:
     """
-    Uses Google Gemini to generate a high CTR, click-baity (but accurate) title for the AKTU notice.
+    Uses AI to generate a high CTR, click-baity (but accurate) title for the AKTU notice.
     """
-    model = genai.GenerativeModel('gemini-2.5-flash')
-    
     prompt = f"""
 You are an expert copywriter for an Indian engineering student blog.
 Rewrite the following AKTU official notice title into a highly engaging, high-CTR (Click-Through Rate) blog post title.
@@ -29,11 +32,12 @@ Original Notice Title: {original_title}
 Return ONLY the new title text, nothing else.
 """
     try:
-        response = model.generate_content(
-            prompt,
-            generation_config=genai.types.GenerationConfig(temperature=0.9)
+        response = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.9
         )
-        new_title = response.text.strip().replace('"', '').replace("'", "")
+        new_title = response.choices[0].message.content.strip().replace('"', '').replace("'", "")
         print(f"[INFO] Generated CTR Title: {new_title}")
         return new_title
     except Exception as e:
@@ -43,7 +47,7 @@ Return ONLY the new title text, nothing else.
 
 def generate_blog(title: str, link: str, pdf_text: str = "", image_url: str = "") -> str:
     """
-    Uses Google Gemini to generate a 1000+ word SEO blog post for a given AKTU notice.
+    Uses AI to generate a 1000+ word SEO blog post for a given AKTU notice.
 
     Args:
         title: The notice/circular title.
@@ -54,11 +58,6 @@ def generate_blog(title: str, link: str, pdf_text: str = "", image_url: str = ""
     Returns:
         The generated blog content as an HTML-ready string.
     """
-    
-    # Optional: we can specify the model ('gemini-2.5-pro' or 'gemini-2.5-flash' are good choices)
-    # Using flash for faster & cheaper generation, or pro for better reasoning
-    model = genai.GenerativeModel('gemini-2.5-flash')
-
     internal_links_text = "\n".join(
         [f"- {url}" for url in INTERNAL_LINKS]
     )
@@ -111,14 +110,13 @@ Do NOT add a meta description tag — just return the full blog HTML body conten
 """
 
     try:
-        response = model.generate_content(
-            prompt,
-            generation_config=genai.types.GenerationConfig(
-                temperature=0.8,
-                max_output_tokens=3000,
-            )
+        response = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.8,
+            max_tokens=3000
         )
-        content = response.text.strip()
+        content = response.choices[0].message.content.strip()
         
         # Strip potential markdown formatting from the response
         if content.startswith("```html"):
@@ -130,11 +128,11 @@ Do NOT add a meta description tag — just return the full blog HTML body conten
         if content.endswith("```"):
             content = content[:-3]
             
-        print(f"[INFO] Blog generated via Gemini ({len(content)} characters).")
+        print(f"[INFO] Blog generated via AI ({len(content)} characters).")
         return content.strip()
 
     except Exception as e:
-        print(f"[ERROR] Gemini API call failed: {e}")
+        print(f"[ERROR] API call failed: {e}")
         return ""
 
 

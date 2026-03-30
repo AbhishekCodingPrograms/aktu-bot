@@ -9,6 +9,8 @@ load_dotenv()  # Load variables from .env file
 
 # 🔑 API Keys (Loaded from environment variables or set manually)
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY") # (Only needed if GENERATE_IMAGES is True)
 
 # 🌐 WordPress Site Settings
