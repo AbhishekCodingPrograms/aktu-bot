@@ -25,13 +25,14 @@ def fetch_notices() -> list[dict]:
         )
     }
 
+    from network_router import robust_get
+    
     import time
     uncached_url = f"{AKTU_URL}?_={int(time.time())}"
     
     try:
-        response = requests.get(uncached_url, headers=headers, timeout=15, verify=False)
-        response.raise_for_status()
-    except requests.RequestException as e:
+        response = robust_get(uncached_url, headers=headers)
+    except Exception as e:
         print(f"[ERROR] Failed to fetch AKTU page: {e}")
         return []
 

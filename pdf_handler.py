@@ -17,12 +17,12 @@ def process_pdf(pdf_url: str):
         tuple: (extracted_text: str, webp_image_bytes: bytes | None)
     """
     print(f"   [INFO] Downloading and parsing PDF: {pdf_url}")
+    from network_router import robust_get
     try:
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
         }
-        response = requests.get(pdf_url, headers=headers, timeout=30, verify=False)
-        response.raise_for_status()
+        response = robust_get(pdf_url, headers=headers)
         pdf_bytes = response.content
         
         doc = fitz.open(stream=pdf_bytes, filetype="pdf")
