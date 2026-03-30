@@ -1,3 +1,3 @@
 @echo off
-cd /d "C:\Users\abhis\OneDrive\Desktop\Auto Post"
+cd /d "%~dp0"
 python main.py
