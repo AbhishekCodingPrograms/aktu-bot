@@ -74,8 +74,8 @@ def main():
             try:
                 # AKTU format is usually '19-Mar-2026'
                 notice_date = datetime.strptime(date_text, "%d-%b-%Y")
-                if (datetime.now() - notice_date).days > 3:
-                    print(f"[SKIP] Old notice ({date_text}): {title[:60]}...")
+                if abs((datetime.now() - notice_date).days) > 90:
+                    print(f"[SKIP] Very old notice ({date_text}): {title[:60]}...")
                     posted.append(title)
                     save_database(posted)
                     continue
