@@ -29,10 +29,13 @@ def publish_post(title: str, content: str, media_id: int = 0) -> dict:
         "content":    content,
         "slug":       slug,
         "status":     "publish",          # Change to "draft" to review before publishing
-        "categories": WP_CATEGORY_IDS,
-        "tags":       WP_TAG_IDS,
         "format":     "standard",
     }
+    
+    if WP_CATEGORY_IDS:
+        post_data["categories"] = WP_CATEGORY_IDS
+    if WP_TAG_IDS:
+        post_data["tags"] = WP_TAG_IDS
     
     # Attach featured image if generated successfully
     if media_id > 0:

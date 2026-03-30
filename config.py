@@ -19,8 +19,8 @@ WP_USERNAME = os.environ.get("WP_USERNAME")
 WP_PASSWORD = os.environ.get("WP_PASSWORD")   # Use App Password from WP settings
 
 # 📚 WordPress Category & Tag IDs (update to match your site)
-WP_CATEGORY_IDS = [1]        # e.g., "AKTU" category ID
-WP_TAG_IDS = [2, 3]          # e.g., "AKTU", "Results" tag IDs
+WP_CATEGORY_IDS = []         # e.g., "AKTU" category ID, leave empty [] to skip
+WP_TAG_IDS = []              # e.g., "AKTU", "Results" tag IDs, leave empty [] to skip
 
 # 🔗 AKTU Source URL
 AKTU_URL = "https://erp.aktu.ac.in/Webpages/Public/Circular/frmCircularForWebsite.aspx"
